@@ -1,0 +1,1485 @@
+{
+	"info": {
+		"_postman_id": "454387a9-9904-49e1-b108-4415c77db137",
+		"name": "Communication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12904408"
+	},
+	"item": [
+		{
+			"name": "Tenant Level",
+			"item": [
+				{
+					"name": "Client Credentials Grant - tenant json",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"if (responseBody.has(\"access_token\")) {\r",
+									"    postman.setEnvironmentVariable(\"tmp_tenant_access_token\", jsonData.access_token);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "tenant_id",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"client_id\": \"{{ext_communication_app_confclient_id}}\",\r\n    \"client_secret\": \"{{ext_communication_app_confclient_secret}}\", \r\n    \"grant_type\": \"client_credentials\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/tenants/{{tenant_id}}/oauth2/token",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"tenants",
+								"{{tenant_id}}",
+								"oauth2",
+								"token"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Password Grant - tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"tmp_tenant_access_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{ext_communication_app_confclient_secret}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{ext_communication_app_confclient_id}}",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{user_name}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{tenant_user_password}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid",
+									"type": "text"
+								},
+								{
+									"key": "response_type",
+									"value": "id_token",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_host}}/tenants/{{tenant_id}}/oauth2/token",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"tenants",
+								"{{tenant_id}}",
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Common Requests",
+			"item": [
+				{
+					"name": "Get a list of domains from DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains testing Domain test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    for (domain in jsonData.data) {\r",
+									"        if (jsonData.data[domain][\"id\"] === pm.environment.get(\"exstream_domain\")) {\r",
+									"            pm.expect(jsonData.data[domain][\"id\"]).to.eql(pm.environment.get(\"exstream_domain\"));\r",
+									"            return;\r",
+									"        }\r",
+									"    }\r",
+									"    pm.expect(false).to.equal(true);  // force failure\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/domains",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import an export file into DAS - Example 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "exportPackage",
+									"description": "The export file that is being imported.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Claim Acknowledgement (CA)-9e49a94b-8860-4318-a2a0-15ae506e328b-20220922_1810.zip"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/import/das/{{exstream_domain}}?commit=true",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"import",
+								"das",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "commit",
+									"value": "true",
+									"description": "commit=true applies the changes from the import file in DAS.  commit=false returns the results of what would happen but does not make any changes in DAS."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import an export file into DAS - Example 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "exportPackage",
+									"description": "The export file that is being imported.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Claim Estimate Letter(CA)-e3ad7e29-4db9-428f-a38c-343c9e7aa39f-20220922_1810.zip"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/import/das/{{exstream_domain}}?commit=true",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"import",
+								"das",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "commit",
+									"value": "true",
+									"description": "commit=true applies the changes from the import file in DAS.  commit=false returns the results of what would happen but does not make any changes in DAS."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import an export file into DAS - Example 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "exportPackage",
+									"description": "The export file that is being imported.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Generic Empower Fulfillment.zip"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/import/das/{{exstream_domain}}?commit=true",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"import",
+								"das",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "commit",
+									"value": "true",
+									"description": "commit=true applies the changes from the import file in DAS.  commit=false returns the results of what would happen but does not make any changes in DAS."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Import an export file into DAS - Example 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "exportPackage",
+									"description": "The export file that is being imported.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-sampleFileForWorkflowAndUpdate.json-9c6f9a92-fa99-4a63-81e3-b6ad2200f5e9-20221004_1854.zip"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/import/das/{{exstream_domain}}?commit=true",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"import",
+								"das",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "commit",
+									"value": "true",
+									"description": "commit=true applies the changes from the import file in DAS.  commit=false returns the results of what would happen but does not make any changes in DAS."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a list of communications from DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains multiple communications test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.length, \"This test assumes that you have run the Import requests prior to executing this test.  See the README for more information.\").to.be.gte(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/resources/{{exstream_domain}}?filter.types=exstrapplication&filter.states=APPROVED&filter.latestVersion=true&count=100&offset=0",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"resources",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "filter.types",
+									"value": "exstrapplication",
+									"description": "Communications have the type \"exstrapplication\" in DAS."
+								},
+								{
+									"key": "filter.states",
+									"value": "APPROVED",
+									"description": "filter.states=APPROVED gets the approved versions of the communications. Combined with filter.latestVersion=true this gets the latest APPROVED version of the communications."
+								},
+								{
+									"key": "filter.latestVersion",
+									"value": "true",
+									"description": "filter.latestVersion=true gets the latest version of the communications.  Combined with filter.states=APPROVED this gets the latest APPROVED version of the communications."
+								},
+								{
+									"key": "count",
+									"value": "100",
+									"description": "The number of results to return in the response."
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "This is the paging offset. \"offset\" is used to get subsequent pages if there are more results available than specified by the count value in the request."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a list of communications associated with a sample file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains at least one communication test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.length, \"This test assumes that you have run the Import requests prior to executing this test.  See the README for more information.\").to.be.gte(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/links/{{exstream_domain}}/resources?linkObjectId=a9c91f24-1158-4e0b-a458-5d483f0a8597&linkDepth=10&rfilter.types=exstrapplication&rfilter.states=APPROVED&offset=0&count=1000&fetchApproval=false",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"links",
+								"{{exstream_domain}}",
+								"resources"
+							],
+							"query": [
+								{
+									"key": "linkObjectId",
+									"value": "a9c91f24-1158-4e0b-a458-5d483f0a8597"
+								},
+								{
+									"key": "linkDepth",
+									"value": "10",
+									"description": "The query depth. \"10\" should always get the communication when using the sample file id as the object"
+								},
+								{
+									"key": "rfilter.types",
+									"value": "exstrapplication"
+								},
+								{
+									"key": "rfilter.states",
+									"value": "APPROVED"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "count",
+									"value": "1000"
+								},
+								{
+									"key": "fetchApproval",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a list of resources from DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains multiple resources test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.length, \"This test assumes that you have run the Import requests prior to executing this test.  See the README for more information.\").to.be.gte(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/resources/{{exstream_domain}}?filter.states=APPROVED&filter.latestVersion=true&count=100&offset=0",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"resources",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "filter.types",
+									"value": "exstrapplication",
+									"description": "Communications have the type \"exstrapplication\" in DAS.",
+									"disabled": true
+								},
+								{
+									"key": "filter.states",
+									"value": "APPROVED",
+									"description": "filter.states=APPROVED gets the approved versions of the communications. Combined with filter.latestVersion=true this gets the latest APPROVED version of the communications."
+								},
+								{
+									"key": "filter.latestVersion",
+									"value": "true",
+									"description": "filter.latestVersion=true gets the latest version of the communications.  Combined with filter.states=APPROVED this gets the latest APPROVED version of the communications."
+								},
+								{
+									"key": "count",
+									"value": "100",
+									"description": "The number of results to return in the response."
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "This is the paging offset. \"offset\" is used to get subsequent pages if there are more results available than specified by the count value in the request."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Move a resource to a new workflow state in DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"state\": \"DRAFT\",\r\n  \"auditedComment\": \"VALID state values are DRAFT, REVIEW, APPROVED, and REJECTED. Valid state changes are DRAFT to REVIEW, REVIEW to APPROVED, APPROVED to DRAFT, REVIEW to REJECTED.  Moving an object from APPROVED to DRAFT creates a new version of the object.\",\r\n  \"locked\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/resources/{{exstream_domain}}/:resource_id/state",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"resources",
+								"{{exstream_domain}}",
+								":resource_id",
+								"state"
+							],
+							"variable": [
+								{
+									"key": "resource_id",
+									"value": "9c6f9a92-fa99-4a63-81e3-b6ad2200f5e9",
+									"description": "The ID of the resource being modified."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload new content for a resource in DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"description": "The new content for the resource that is being updated.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/uploadNewContentForResourceInDAS.json"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/resources/{{exstream_domain}}/:resource_id/content",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"resources",
+								"{{exstream_domain}}",
+								":resource_id",
+								"content"
+							],
+							"variable": [
+								{
+									"key": "resource_id",
+									"value": "9c6f9a92-fa99-4a63-81e3-b6ad2200f5e9",
+									"description": "The id of the resource whose content is being replaced."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload a new sample file into DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"description": "The contents of the new driver file.",
+									"type": "file",
+									"src": "./CommunicationGoldenCopy/Postman/files/uploadNewDriverFileIntoDAS.json"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/resources/{{exstream_domain}}/content?name=UploadedSampleFile&type=samplefile&subtype=driver",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"resources",
+								"{{exstream_domain}}",
+								"content"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "UploadedSampleFile",
+									"description": "This will be the name of the resource in DAS"
+								},
+								{
+									"key": "type",
+									"value": "samplefile",
+									"description": "\"samplefile\" is the parent type for driver files"
+								},
+								{
+									"key": "subtype",
+									"value": "driver",
+									"description": "\"driver\" is the subtype specification for driver files"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get the communication set id using the communication id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains at least one communication set test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.length, \"This test assumes that you have run the Import requests prior to executing this test.  See the README for more information.\").to.be.gte(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/links/{{exstream_domain}}?linkSubjectId=e0421aa8-c1ce-41d9-a10a-cb830ebd4beb&linkDepth=2&filter.types=exstrcommunicationset",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"links",
+								"{{exstream_domain}}"
+							],
+							"query": [
+								{
+									"key": "linkSubjectId",
+									"value": "e0421aa8-c1ce-41d9-a10a-cb830ebd4beb",
+									"description": "The id of the communication whose communication set is being queried for."
+								},
+								{
+									"key": "linkDepth",
+									"value": "2",
+									"description": "The query depth. \"2\" should always get the communication set when using a communication id as the subject."
+								},
+								{
+									"key": "filter.types",
+									"value": "exstrcommunicationset",
+									"description": "Communication sets have the type value \"exstrcommunicationset\"."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get the driver name for a communication set from DAS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contains at least one dsnList test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.dsnlist.length, \"This test assumes that you have run the Import requests prior to executing this test.  See the README for more information.\").to.be.gte(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{communication_url}}/design/api/v1/manifests/{{exstream_domain}}/communication-set/:communication_set_id",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"design",
+								"api",
+								"v1",
+								"manifests",
+								"{{exstream_domain}}",
+								"communication-set",
+								":communication_set_id"
+							],
+							"variable": [
+								{
+									"key": "communication_set_id",
+									"value": "619bd602-05de-4c30-829b-7ed074263dff",
+									"description": "The id of the communication set whose driver name is being queried."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate output using Orchestration - Full response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "e0421aa8-c1ce-41d9-a10a-cb830ebd4beb",
+								"type": "default",
+								"description": "The id of the the communication to generate the PDF for."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "Driver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"claim\": {\r\n\t\t\"claimNumber\": \"000-00-000203\",\r\n\t\t\"description\": \"Hit curb!\",\r\n\t\t\"lossDate\": \"2021-04-15\",\r\n\t\t\"reportedDate\": \"2021-04-15\"\r\n\t},\r\n\t\"contactDetails\": {\r\n\t\t\"emailAddress1\": \"0000@guidewire.com\",\r\n\t\t\"emailAddress2\": \"0000@hotmail.com\",\r\n\t\t\"firstName\": \"Allen\",\r\n\t\t\"lastName\": \"Robertson\"\r\n\t},\r\n\t\"policyDetails\": {\r\n\t\t\"addressDetails\": {\r\n\t\t\t\"addressLine1\": \"4263 Live Oak Blvd.\",\r\n\t\t\t\"city\": \"San Gabriel\",\r\n\t\t\t\"postalCode\": \"91101\",\r\n\t\t\t\"state\": \"CA\"\r\n\t\t},\r\n\t\t\"insuredFirstName\": \"Allen\",\r\n\t\t\"insuredLastName\": \"Robertson\",\r\n\t\t\"insuredName\": \"Allen Robertson\",\r\n\t\t\"policyNumber\": \"54-253465\",\r\n\t\t\"policyPeriodEffectiveDate\": \"2021-01-13\",\r\n\t\t\"policyPeriodExpirationDate\": \"2022-01-12\"\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/ondemand/{{exstream_domain}}/generate",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"ondemand",
+								"{{exstream_domain}}",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate output using Orchestration - PDF only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content type test\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/pdf\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true,
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "e0421aa8-c1ce-41d9-a10a-cb830ebd4beb",
+								"type": "default",
+								"description": "The id of the the communication to generate the PDF for."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "Driver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							},
+							{
+								"key": "Accept",
+								"value": "application/pdf",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"claim\": {\r\n\t\t\"claimNumber\": \"000-00-000203\",\r\n\t\t\"description\": \"Hit curb!\",\r\n\t\t\"lossDate\": \"2021-04-15\",\r\n\t\t\"reportedDate\": \"2021-04-15\"\r\n\t},\r\n\t\"contactDetails\": {\r\n\t\t\"emailAddress1\": \"0000@guidewire.com\",\r\n\t\t\"emailAddress2\": \"0000@hotmail.com\",\r\n\t\t\"firstName\": \"Allen\",\r\n\t\t\"lastName\": \"Robertson\"\r\n\t},\r\n\t\"policyDetails\": {\r\n\t\t\"addressDetails\": {\r\n\t\t\t\"addressLine1\": \"4263 Live Oak Blvd.\",\r\n\t\t\t\"city\": \"San Gabriel\",\r\n\t\t\t\"postalCode\": \"91101\",\r\n\t\t\t\"state\": \"CA\"\r\n\t\t},\r\n\t\t\"insuredFirstName\": \"Allen\",\r\n\t\t\"insuredLastName\": \"Robertson\",\r\n\t\t\"insuredName\": \"Allen Robertson\",\r\n\t\t\"policyNumber\": \"54-253465\",\r\n\t\t\"policyPeriodEffectiveDate\": \"2021-01-13\",\r\n\t\t\"policyPeriodExpirationDate\": \"2022-01-12\"\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/ondemand/{{exstream_domain}}/generate",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"ondemand",
+								"{{exstream_domain}}",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Empower document using Orchestration - Full response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "243611df-7f67-4816-b1c7-5f6617d5afa1",
+								"type": "default",
+								"description": "The id of the communication to generate."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "ClaimEstimateDriver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							},
+							{
+								"key": "empowerUser",
+								"value": "{{user_name}}",
+								"type": "default",
+								"description": "This should be a system account, not the account of the user making the request.  Using a system account allows end users to have fewer permissions."
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"claim\": {\r\n    \"claimNumber\": \"000-00-000106\",\r\n    \"description\": \"Hit curb!\",\r\n    \"lossDate\": \"2022-09-19\",\r\n    \"reportedDate\": \"2022-09-19\"\r\n  },\r\n  \"contactDetails\": {\r\n    \"emailAddress1\": \"0000@guidewire.com\",\r\n    \"emailAddress2\": \"0000@hotmail.com\",\r\n    \"firstName\": \"Allen\",\r\n    \"lastName\": \"Robertson\"\r\n  },\r\n  \"evaluations\": [\r\n    {\r\n      \"claimantOutOfPocket\": \"1000.00\",\r\n      \"diagnostic\": \"250.00\",\r\n      \"futureMedical\": \"1000.00\",\r\n      \"hospitalER\": \"1000.00\",\r\n      \"other\": \"5000.00\",\r\n      \"physicalTherapy\": \"1500.00\",\r\n      \"treatingPhysician\": \"500.00\"\r\n    }\r\n  ],\r\n  \"policyDetails\": {\r\n    \"addressDetails\": {\r\n      \"addressLine1\": \"4263 Live Oak Blvd.\",\r\n      \"city\": \"San Gabriel\",\r\n      \"postalCode\": \"91101\",\r\n      \"state\": \"CA\"\r\n    },\r\n    \"insuredFirstName\": \"Allen\",\r\n    \"insuredLastName\": \"Robertson\",\r\n    \"insuredName\": \"Allen Robertson\",\r\n    \"policyNumber\": \"54-253465\",\r\n    \"policyPeriodEffectiveDate\": \"2022-03-30\",\r\n    \"policyPeriodExpirationDate\": \"2023-03-29\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/ondemand/{{exstream_domain}}/generate",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"ondemand",
+								"{{exstream_domain}}",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Empower document using Orchestration - Document ID only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content type test\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"tmp_empower_document_id\", pm.response.json().documentId);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true,
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "243611df-7f67-4816-b1c7-5f6617d5afa1",
+								"type": "default",
+								"description": "The id of the communication to generate."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "ClaimEstimateDriver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							},
+							{
+								"key": "empowerUser",
+								"value": "{{user_name}}",
+								"type": "default",
+								"description": "This should be a system account, not the account of the user making the request.  Using a system account allows end users to have fewer permissions."
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"claim\": {\r\n    \"claimNumber\": \"000-00-000106\",\r\n    \"description\": \"Hit curb!\",\r\n    \"lossDate\": \"2022-09-19\",\r\n    \"reportedDate\": \"2022-09-19\"\r\n  },\r\n  \"contactDetails\": {\r\n    \"emailAddress1\": \"0000@guidewire.com\",\r\n    \"emailAddress2\": \"0000@hotmail.com\",\r\n    \"firstName\": \"Allen\",\r\n    \"lastName\": \"Robertson\"\r\n  },\r\n  \"evaluations\": [\r\n    {\r\n      \"claimantOutOfPocket\": \"1000.00\",\r\n      \"diagnostic\": \"250.00\",\r\n      \"futureMedical\": \"1000.00\",\r\n      \"hospitalER\": \"1000.00\",\r\n      \"other\": \"5000.00\",\r\n      \"physicalTherapy\": \"1500.00\",\r\n      \"treatingPhysician\": \"500.00\"\r\n    }\r\n  ],\r\n  \"policyDetails\": {\r\n    \"addressDetails\": {\r\n      \"addressLine1\": \"4263 Live Oak Blvd.\",\r\n      \"city\": \"San Gabriel\",\r\n      \"postalCode\": \"91101\",\r\n      \"state\": \"CA\"\r\n    },\r\n    \"insuredFirstName\": \"Allen\",\r\n    \"insuredLastName\": \"Robertson\",\r\n    \"insuredName\": \"Allen Robertson\",\r\n    \"policyNumber\": \"54-253465\",\r\n    \"policyPeriodEffectiveDate\": \"2022-03-30\",\r\n    \"policyPeriodExpirationDate\": \"2023-03-29\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/ondemand/{{exstream_domain}}/generate",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"ondemand",
+								"{{exstream_domain}}",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fulfill Empower output using Orchestration - Full response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"HTTP Response test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status test\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"tmp_empower_document_id\", \"UUID of Empower document as generated by Generate Empower document using Orchestration - Document ID only\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true,
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "21f9a9fe-b363-4f32-8303-6a8bf5f7009e",
+								"type": "default",
+								"description": "The id of the communication that is being fulfilled."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "EmpowerFulfillmentDriver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							},
+							{
+								"key": "preserveDocuments",
+								"value": "false",
+								"type": "default",
+								"description": "preserveDocuments=false removes the documents from the Empower database.  This prevents duplicate storage of documents."
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documents\" : [\"{{tmp_empower_document_id}}\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/fulfillment/ondemand/{{exstream_domain}}/fulfill",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"fulfillment",
+								"ondemand",
+								"{{exstream_domain}}",
+								"fulfill"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fulfill Empower output using Orchestration - PDF only",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"tmp_empower_document_id\", \"UUID of Empower document as generated by Generate Empower document using Orchestration - Document ID only\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true,
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "communicationId",
+								"value": "21f9a9fe-b363-4f32-8303-6a8bf5f7009e",
+								"type": "default",
+								"description": "The id of the communication that is being fulfilled."
+							},
+							{
+								"key": "driverDataSource",
+								"value": "EmpowerFulfillmentDriver",
+								"type": "default",
+								"description": "The \"prodDsn\" value that can be obtained using the \"Get the driver name for a communication set from DAS\" call."
+							},
+							{
+								"key": "preserveDocuments",
+								"value": "false",
+								"type": "default",
+								"description": "preserveDocuments=false removes the documents from the Empower database.  This prevents duplicate storage of documents."
+							},
+							{
+								"key": "Accept",
+								"value": "application/pdf",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"documents\" : [\"{{tmp_empower_document_id}}\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{communication_url}}/orchestration/api/v1/inputs/fulfillment/ondemand/{{exstream_domain}}/fulfill",
+							"host": [
+								"{{communication_url}}"
+							],
+							"path": [
+								"orchestration",
+								"api",
+								"v1",
+								"inputs",
+								"fulfillment",
+								"ondemand",
+								"{{exstream_domain}}",
+								"fulfill"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{tmp_tenant_access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
