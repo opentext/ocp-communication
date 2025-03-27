@@ -46,7 +46,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"client_id\": \"{{ext_communication_app_confclient_id}}\",\r\n    \"client_secret\": \"{{ext_communication_app_confclient_secret}}\", \r\n    \"grant_type\": \"client_credentials\"\r\n}",
+							"raw": "{\r\n    \"client_id\": \"{{app_confclient_id}}\",\r\n    \"client_secret\": \"{{app_confclient_secret}}\", \r\n    \"grant_type\": \"client_credentials\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -96,12 +96,12 @@
 							"basic": [
 								{
 									"key": "password",
-									"value": "{{ext_communication_app_confclient_secret}}",
+									"value": "{{app_confclient_secret}}",
 									"type": "string"
 								},
 								{
 									"key": "username",
-									"value": "{{ext_communication_app_confclient_id}}",
+									"value": "{{app_confclient_id}}",
 									"type": "string"
 								},
 								{
@@ -127,12 +127,12 @@
 							"urlencoded": [
 								{
 									"key": "username",
-									"value": "{{user_name}}",
+									"value": "{{tenant_user_id}}",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "{{tenant_user_password}}",
+									"value": "{{tenant_user_pwd}}",
 									"type": "text"
 								},
 								{
@@ -257,7 +257,7 @@
 									"key": "exportPackage",
 									"description": "The export file that is being imported.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Claim Acknowledgement (CA)-9e49a94b-8860-4318-a2a0-15ae506e328b-20220922_1810.zip"
+									"src": "ExportPackage-Claim Acknowledgement (CA)-9e49a94b-8860-4318-a2a0-15ae506e328b-20220922_1810.zip"
 								}
 							]
 						},
@@ -318,7 +318,7 @@
 									"key": "exportPackage",
 									"description": "The export file that is being imported.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Claim Estimate Letter(CA)-e3ad7e29-4db9-428f-a38c-343c9e7aa39f-20220922_1810.zip"
+									"src": "ExportPackage-Claim Estimate Letter(CA)-e3ad7e29-4db9-428f-a38c-343c9e7aa39f-20220922_1810.zip"
 								}
 							]
 						},
@@ -379,7 +379,7 @@
 									"key": "exportPackage",
 									"description": "The export file that is being imported.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-Generic Empower Fulfillment.zip"
+									"src": "ExportPackage-Generic Empower Fulfillment.zip"
 								}
 							]
 						},
@@ -440,7 +440,7 @@
 									"key": "exportPackage",
 									"description": "The export file that is being imported.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/ExportPackage-sampleFileForWorkflowAndUpdate.json-9c6f9a92-fa99-4a63-81e3-b6ad2200f5e9-20221004_1854.zip"
+									"src": "ExportPackage-sampleFileForWorkflowAndUpdate.json-9c6f9a92-fa99-4a63-81e3-b6ad2200f5e9-20221004_1854.zip"
 								}
 							]
 						},
@@ -789,7 +789,7 @@
 									"key": "file",
 									"description": "The new content for the resource that is being updated.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/uploadNewContentForResourceInDAS.json"
+									"src": "uploadNewContentForResourceInDAS.json"
 								}
 							]
 						},
@@ -851,7 +851,7 @@
 									"key": "file",
 									"description": "The contents of the new driver file.",
 									"type": "file",
-									"src": "./CommunicationGoldenCopy/Postman/files/uploadNewDriverFileIntoDAS.json"
+									"src": "uploadNewDriverFileIntoDAS.json"
 								}
 							]
 						},
@@ -1184,7 +1184,7 @@
 							},
 							{
 								"key": "empowerUser",
-								"value": "{{user_name}}",
+								"value": "{{tenant_user_id}}",
 								"type": "default",
 								"description": "This should be a system account, not the account of the user making the request.  Using a system account allows end users to have fewer permissions."
 							}
@@ -1262,7 +1262,7 @@
 							},
 							{
 								"key": "empowerUser",
-								"value": "{{user_name}}",
+								"value": "{{tenant_user_id}}",
 								"type": "default",
 								"description": "This should be a system account, not the account of the user making the request.  Using a system account allows end users to have fewer permissions."
 							},
