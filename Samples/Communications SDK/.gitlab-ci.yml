@@ -1,0 +1,6 @@
+##########################################################################
+include:
+  - project: 'exstream-build/gitlab-ci-scripts'
+    ref: 'master'
+    file: 'projects/sample-code/default.yml'
+

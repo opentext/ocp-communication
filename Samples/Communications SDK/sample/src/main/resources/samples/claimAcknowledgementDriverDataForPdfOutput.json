@@ -1,0 +1,28 @@
+{
+	"claim": {
+		"claimNumber": "000-00-000203",
+		"description": "Hit curb!",
+		"lossDate": "2021-04-15",
+		"reportedDate": "2021-04-15"
+	},
+	"contactDetails": {
+		"emailAddress1": "0000@guidewire.com",
+		"emailAddress2": "0000@hotmail.com",
+		"firstName": "Allen",
+		"lastName": "Robertson"
+	},
+	"policyDetails": {
+		"addressDetails": {
+			"addressLine1": "4263 Live Oak Blvd.",
+			"city": "San Gabriel",
+			"postalCode": "91101",
+			"state": "CA"
+		},
+		"insuredFirstName": "Allen",
+		"insuredLastName": "Robertson",
+		"insuredName": "Allen Robertson",
+		"policyNumber": "54-253465",
+		"policyPeriodEffectiveDate": "2021-01-13",
+		"policyPeriodExpirationDate": "2022-01-12"
+	}
+}

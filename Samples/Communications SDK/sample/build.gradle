@@ -1,0 +1,26 @@
+plugins {
+	id 'application'
+	id 'org.springframework.boot' version '2.7.11'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+}
+
+configurations.all {
+	resolutionStrategy {
+		dependencySubstitution {
+			substitute module('org.yaml:snakeyaml') with module('org.yaml:snakeyaml:1.33')
+		}
+	}
+}
+
+dependencies {
+	implementation project(":exstream-api")
+	implementation 'org.springframework:spring-web:5.3.27'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+clean {
+	delete "output"
+}

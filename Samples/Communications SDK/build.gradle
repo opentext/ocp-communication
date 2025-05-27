@@ -1,0 +1,24 @@
+allprojects {
+    group = 'com.opentext.exstream.sdk'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = '17'
+
+    repositories {
+        mavenCentral()
+    }
+
+    version = '0.0.1-SNAPSHOT'
+}
+
+task build {
+   subprojects.each { subproject ->
+       dependsOn("${subproject.name}:build")
+   }
+}
+
+task bootRun {
+    dependsOn(":sample:bootRun")
+}

@@ -1,0 +1,7 @@
+[bugtraq]
+	url = http://jira.opentext.com/browse/%BUGID%
+	message = "Defect #%BUGID%"
+	label = "Issue #"
+	append = true
+	warnifnoissue = true
+	number = false
